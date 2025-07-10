@@ -1,7 +1,7 @@
 CREATE TABLE roles(
 	id bigserial PRIMARY KEY,
 	name varchar(45) NOT NULL,
-	description varchar(45)
+	description TEXT
 );
 
 CREATE TABLE phones(
@@ -17,8 +17,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-
-
 CREATE TABLE users(
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 	first_name varchar(30) NOT NULL,
@@ -26,12 +24,12 @@ CREATE TABLE users(
 	cpf varchar(14) NOT NULL UNIQUE,
 	email varchar(100) NOT NULL UNIQUE,
 	password varchar(100) NOT NULL,
-	phones_id bigint NOT NULL,
+	phone_id bigint NOT NULL,
 	active boolean NOT NULL,
 	created_at timestamp DEFAULT current_timestamp,
 	updated_at timestamp DEFAULT current_timestamp,
 	CONSTRAINT fk_users_phones
-		FOREIGN KEY (phones_id)
+		FOREIGN KEY (phone_id)
 		REFERENCES phones(id)
 );
 
@@ -42,13 +40,13 @@ EXECUTE PROCEDURE trigger_set_timestamp();
 
 CREATE TABLE users_roles(
 	id bigserial PRIMARY KEY,
-	users_id uuid NOT NULL,
-	roles_id bigint NOT NULL,
+	user_id uuid NOT NULL,
+	role_id bigint NOT NULL,
 	CONSTRAINT fk_users_roles_users
-		FOREIGN KEY (users_id)
+		FOREIGN KEY (user_id)
 		REFERENCES users(id),
 	CONSTRAINT fk_users_roles_roles
-		FOREIGN KEY (roles_id)
+		FOREIGN KEY (role_id)
 		REFERENCES roles(id)
 );
 
@@ -59,25 +57,25 @@ CREATE TABLE addresses(
 	neighborhood varchar(50) NOT NULL,
 	street varchar(50) NOT NULL,
 	number_house varchar(15) NOT NULL,
-	complement varchar(200)
-); 
+	complement TEXT
+);
 
 CREATE TABLE users_addresses(
 	id bigserial PRIMARY KEY,
-	users_id uuidd NOT NULL,
-	addresses_id bigint NOT NULL,
+	user_id uuid NOT NULL,
+	address_id bigint NOT NULL,
 	CONSTRAINT fk_users_addresses_users
-		FOREIGN KEY (users_id)
+		FOREIGN KEY (user_id)
 		REFERENCES users(id),
 	CONSTRAINT fk_users_addresses_adresses
-		FOREIGN KEY (addresses_id)
+		FOREIGN KEY (address_id)
 		REFERENCES addresses(id)
 );
 
 CREATE TABLE pizza_flavors(
 	id bigserial PRIMARY KEY,
 	name varchar(45) NOT NULL,
-	description varchar(45),
+	description TEXT,
 	base_price decimal(10, 4) NOT NULL,
 	available boolean NOT NULL
 );
@@ -100,51 +98,57 @@ CREATE TYPE valid_status AS ENUM ('pendente', 'em preparo', 'saiu pra entrega', 
 
 CREATE TABLE orders(
 	id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-	users_id uuid NOT NULL,
-	addresses_id bigint NOT NULL,
-	note varchar(200),
+	user_id uuid NOT NULL,
+	address_id bigint NOT NULL,
+	note TEXT,
 	total_value decimal (10, 2),
 	status valid_status NOT NULL,
 	created_at timestamp DEFAULT current_timestamp,
 	CONSTRAINT fk_orders_users
-		FOREIGN KEY (users_id) 
+		FOREIGN KEY (user_id)
 		REFERENCES users(id),
 	CONSTRAINT fk_orders_addresses
-		FOREIGN KEY (addresses_id)
+		FOREIGN KEY (address_id)
 		REFERENCES addresses(id)
 );
 
 CREATE TABLE order_items(
 	id bigserial PRIMARY KEY,
-	orders_id uuid NOT NULL,
-	pizza_sizes_id bigint NOT NULL,
+	order_id uuid NOT NULL,
+	pizza_size_id bigint NOT NULL,
 	total_value decimal(10, 2) NOT NULL,
 	CONSTRAINT fk_order_items_orders
-		FOREIGN KEY (orders_id)
+		FOREIGN KEY (order_id)
 		REFERENCES orders(id),
 	CONSTRAINT fk_order_items_pizza_sizes
-		FOREIGN KEY (pizza_sizes_id)
+		FOREIGN KEY (pizza_size_id)
 		REFERENCES pizza_sizes(id)
 );
 
 CREATE TABLE order_items_pizza_flavors(
 	id bigserial PRIMARY KEY,
-	order_items_id bigint NOT NULL,
-	pizza_flavors_id bigint NOT NULL,
+	order_item_id bigint NOT NULL,
+	pizza_flavor_id bigint NOT NULL,
 	quantity integer NOT NULL,
 	total_value decimal(10, 2) NOT NULL,
 	CONSTRAINT fk_order_items_pizza_flavors_order_items
-		FOREIGN KEY (order_items_id)
+		FOREIGN KEY (order_item_id)
 		REFERENCES order_items(id),
 	CONSTRAINT fk_order_items_pizza_flavors_pizza_flavors
-		FOREIGN KEY (pizza_flavors_id)
+		FOREIGN KEY (pizza_flavor_id)
 		REFERENCES pizza_flavors(id)
 );
 
 CREATE TABLE order_items_extras(
 	id bigserial PRIMARY KEY,
-	order_items_id bigint NOT NULL,
-	extras_id bigint NOT NULL,
+	order_item_id bigint NOT NULL,
+	extra_id bigint NOT NULL,
 	quantity integer NOT NULL,
-	total_value decimal(10, 2) NOT NULL
+	total_value decimal(10, 2) NOT NULL,
+	CONSTRAINT fk_order_items_extras_order_items
+		FOREIGN KEY (order_item_id)
+		REFERENCES order_items(id),
+	CONSTRAINT fk_order_items_extras_extras
+		FOREIGN KEY (extra_id)
+		REFERENCES extras(id)
 );
