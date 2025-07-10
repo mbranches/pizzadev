@@ -2,7 +2,7 @@ package dev.accelators.model;
 
 import jakarta.persistence.*;
 
-@Entity(name = "user_roles")
+@Entity(name = "users_roles")
 public class UserRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
