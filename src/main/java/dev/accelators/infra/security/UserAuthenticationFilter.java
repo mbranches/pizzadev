@@ -28,14 +28,26 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         String token = recoveryToken(request);
 
         if (token != null) {
-            String userId = jwtTokenService.validateToken(token);
+            try {
+                String subject = jwtTokenService.validateToken(token);
 
                 User user = repository.findById(UUID.fromString(subject))
                         .orElseThrow(() -> new JWTVerificationException("Token user not found"));
 
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                    {
+                      "status": 403,
+                      "message": "Expired or invalid token"
+                    }
+                """);
+                return;
+            }
         }
 
         filterChain.doFilter(request, response);
