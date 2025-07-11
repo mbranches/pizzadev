@@ -23,4 +23,11 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginPostResponse> login(@Valid @RequestBody LoginPostRequest request) {
+        LoginPostResponse response = service.login(request);
+
+        return ResponseEntity.ok(response);
+    }
 }
