@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class GlobalErrorHandlerAdvice {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<DefaultMessageError> handlerNotFoundException(NotFoundException e) {
-        DefaultMessageError response = new DefaultMessageError(HttpStatus.UNAUTHORIZED.value(), e.getReason());
+        DefaultMessageError response = new DefaultMessageError(HttpStatus.NOT_FOUND.value(), e.getReason());
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
