@@ -2,6 +2,9 @@ package dev.accelators.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -20,7 +24,7 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "uuid")
-    private String id;
+    private UUID id;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -28,13 +32,15 @@ public class User implements UserDetails {
     private String cpf;
     private String email;
     private String password;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "phone_id")
     private Phone phone;
     private Boolean active;
+    @CreationTimestamp(source = SourceType.DB)
     private LocalDateTime createdAt;
+    @UpdateTimestamp(source = SourceType.DB)
     private LocalDateTime updatedAt;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserRole> roles;
 
     @Override
