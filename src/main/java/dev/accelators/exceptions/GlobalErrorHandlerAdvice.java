@@ -20,6 +20,13 @@ public class GlobalErrorHandlerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<DefaultMessageError> handlerBadRequestException(BadRequestException e) {
+        DefaultMessageError response = new DefaultMessageError(HttpStatus.BAD_REQUEST.value(), e.getReason());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<DefaultMessageError> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         String defaultMessage = e.getBindingResult()
