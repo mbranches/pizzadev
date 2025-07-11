@@ -2,10 +2,16 @@ package dev.accelators.model;
 
 import dev.accelators.converter.ValidStatusConverter;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "orders")
 public class Order {
     @Id

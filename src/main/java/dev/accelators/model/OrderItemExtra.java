@@ -1,9 +1,15 @@
 package dev.accelators.model;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.math.BigDecimal;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "order_items_extras")
 public class OrderItemExtra {
     @Id
