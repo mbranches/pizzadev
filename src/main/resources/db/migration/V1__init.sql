@@ -24,7 +24,7 @@ CREATE TABLE users(
 	cpf varchar(14) NOT NULL UNIQUE,
 	email varchar(100) NOT NULL UNIQUE,
 	password varchar(100) NOT NULL,
-	phone_id bigint NOT NULL,
+	phone_id bigint NOT NULL UNIQUE,
 	active boolean NOT NULL,
 	created_at timestamp DEFAULT current_timestamp,
 	updated_at timestamp DEFAULT current_timestamp,
