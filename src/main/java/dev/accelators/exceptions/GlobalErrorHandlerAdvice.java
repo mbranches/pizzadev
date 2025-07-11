@@ -3,6 +3,7 @@ package dev.accelators.exceptions;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -32,5 +33,12 @@ public class GlobalErrorHandlerAdvice {
         DefaultMessageError errorResponse = new DefaultMessageError(HttpStatus.BAD_REQUEST.value(), defaultMessage);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<DefaultMessageError> handlerAuthenticationException(AuthenticationException e) {
+        DefaultMessageError response = new DefaultMessageError(HttpStatus.UNAUTHORIZED.value(), "Email or password invalid");
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }
