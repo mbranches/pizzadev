@@ -1,3 +1,7 @@
+jwt:
+  secret:
+    key: ${ENV_JWT_KEY}
+
 spring:
   config:
     import: optional:classpath:.env[.properties]
