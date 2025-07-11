@@ -16,10 +16,11 @@ import java.util.List;
 public class JwtTokenService {
     @Value("${jwt.secret.key}")
     private String secretKey;
-    private final Algorithm algorithm = Algorithm.HMAC256(secretKey);
     private final String issuer = "backend-accelerators";
 
     public String generateToken(User user) {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+
         ZoneOffset Zone = ZoneOffset.of("-03:00");
         Instant issuedAt = LocalDateTime.now().toInstant(Zone);
         Instant expiration = LocalDateTime.now().plusHours(2).toInstant(Zone);
@@ -36,6 +37,8 @@ public class JwtTokenService {
     }
 
     public String validateToken(String token) {
+        Algorithm algorithm = Algorithm.HMAC256(secretKey);
+
         return JWT.require(algorithm)
                 .withIssuer(issuer)
                 .build()
