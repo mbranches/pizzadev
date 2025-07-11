@@ -12,9 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -22,6 +24,10 @@ import java.util.UUID;
 public class UserAuthenticationFilter extends OncePerRequestFilter {
     private final UserRepository repository;
     private final JwtTokenService jwtTokenService;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final List<String> PUBLIC_PATHS = List.of(
+            "/api/v1/auth/**"
+    );
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -51,6 +57,13 @@ public class UserAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String currentPath = request.getServletPath();
+
+        return PUBLIC_PATHS.stream().anyMatch(p -> pathMatcher.match(p, currentPath));
     }
 
     private String recoveryToken(HttpServletRequest request) {
