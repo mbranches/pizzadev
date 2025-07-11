@@ -30,7 +30,7 @@ public class JwtTokenService {
         return JWT.create()
                 .withIssuer(issuer)
                 .withIssuedAt(issuedAt)
-                .withSubject(user.getId())
+                .withSubject(user.getId().toString())
                 .withExpiresAt(expiration)
                 .withClaim("roles", roles)
                 .sign(algorithm);
