@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -17,7 +18,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(columnDefinition = "uuid")
-    private String id;
+    private UUID id;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
